@@ -1,0 +1,48 @@
+service: instant-card-text-content-stream
+
+plugins:
+- serverless-plugin-common-excludes
+- serverless-plugin-include-dependencies
+- serverless-offline
+
+custom:
+  paquete: instant-card
+  bucket: ${self:custom.paquete}-bucket-${self:provider.stage}-${self:provider.region}
+  InstantCardApi: Api-${self:custom.paquete}-${self:provider.stage}
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: ${opt:stage,'dev'}
+  region: ${opt:region,'us-east-1'}
+  timeout: 120
+  websocketsApiName: custom-websockets-api-name
+  websocketsApiRouteSelectionExpression: $request.body.action # custom routes are selected by the value of the action property in the body
+  websocketsDescription: Custom Serverless Websockets
+  iam:
+    role:
+      statements:
+      - Effect: Allow
+        Action:
+        - secretsmanager:GetSecretValue
+        Resource: arn:aws:secretsmanager:${aws:region}:${aws:accountId}:secret:*
+functions:
+  poeStream:
+    handler: index.handler
+    name: ${self:service}-stream-${self:provider.stage}
+    environment:
+      SN_OPENAI_API: OPENAI_API
+      DEFAULT_AGENT_OPENAI: BURL
+      stage: ${self:provider.stage}
+      region: ${self:provider.region}
+    events:
+    - websocket:
+        route: $connect
+    - websocket:
+        route: $disconnect
+    - websocket:
+        route: $default
+  testHandler:
+    handler: index.testHandler
+    name: ${self:service}-testHandler-${self:provider.stage}
+    environment:
+      stage: ${self:provider.stage}
