@@ -1,0 +1,10 @@
+export const validatingSchema='validating schema...';
+export const validScheme='valid scheme';
+export const invalidSchema='Invalid schema';
+export const gettingMessagesTemplates='gettting messages templates';
+export const consumingOpenaiService='consuming openai service';
+export const successfulOpenaiRequest='successful openai request';
+export const webReponseGenerated='web response generated';
+export const textMessages="messages";
+export const DataSendSuccessful="Data send successful";
+export const WebSocketMessageProcessedSuccessfully='WebSocket message processed successfully';
